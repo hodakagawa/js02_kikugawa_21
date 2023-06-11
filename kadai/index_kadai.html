@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>mytodo</title>
+
+<script src="js/jquery-2.1.3.min.js"></script>
+<link rel="stylesheet" href="css/sample.css">
+</head>
+<body>
+  <h1>TODO-List</h1>
+  <form>
+        <input class="task_value" type="text" />
+        <button class="task_submit" type="button">Add Task</button>
+      </form>
+      <div id="table">
+        <h2>Current Tasks</h2>
+        <ul class="task_list"></ul>
+      </div>
+    <script src="main.js"></script>
+    </body>
+    </html>
+<script>
+const taskValue = document.getElementsByClassName('task_value')[0];
+const taskSubmit = document.getElementsByClassName('task_submit')[0];
+const taskList = document.getElementsByClassName('task_list')[0];
+let listItems = [];
+const storage = localStorage;
+
+// 追加ボタンを作成
+const addTasks = (task) => {
+  // 入力したタスクを追加・表示
+  const listItem = document.createElement('li');
+  const showItem = taskList.appendChild(listItem);
+  showItem.innerHTML = task;
+
+  // タスクに削除ボタンを付与
+  const deleteButton = document.createElement('button');
+  deleteButton.innerHTML = 'Delete';
+  listItem.appendChild(deleteButton);
+
+  // 削除ボタンをクリックし、イベントを発動（タスクが削除）
+  deleteButton.addEventListener('click', evt => {
+    evt.preventDefault();
+    deleteTasks(deleteButton);
+  });
+};
+
+// 削除ボタンにタスクを消す機能を付与
+const deleteTasks = (deleteButton) => {
+  const chosenTask = deleteButton.closest('li');
+  taskList.removeChild(chosenTask);
+};
+
+// 追加ボタンをクリックし、イベントを発動（タスクが追加）
+taskSubmit.addEventListener('click', evt => {
+  evt.preventDefault();
+  const task = taskValue.value;
+  addTasks(task);
+  taskValue.value = '';
+});
+
+renderToDoList();
+
+function addToDo() {
+    let input = document.getElementById("name").value;
+    if (input === "") {
+        return;
+    }
+    addStorage(input);
+    renderToDoList();
+    document.getElementById("name").value = "";
+}
+
+function renderToDoList() {
+    let ul = document.getElementById("ToDoList");
+    ul.innerHTML = "";
+    ToDoList = getStorage();
+    for (let i = 0; i < ToDoList.length; i++) {
+        let ToDo = ToDoList[i];
+        let li = document.createElement("li");
+        li.textContent = ToDo;
+        li.dataset.index = i;
+        li.addEventListener("click", deleteToDo);
+        ul.appendChild(li);
+    }
+}
+
+function deleteToDo() {
+    deleteStorage(this.dataset.index);
+    renderToDoList();
+}
+
+function getStorage() {
+    let list = localStorage.getItem("ToDoList");
+    if (list === null) {
+        return [];
+    } else {
+        return JSON.parse(list);
+    }
+}
+function addStorage(item) {
+    let list = getStorage();
+    list.push(item);
+    setStorage(list);
+}
+function deleteStorage(index) {
+    let list = getStorage();
+    list.splice(index, 1);
+    localStorage.setItem("ToDoList", JSON.stringify(list));
+}
+function setStorage(list){
+    localStorage.setItem("ToDoList", JSON.stringify(list));  
+}
+
+</script>
+</body>
+</html>
